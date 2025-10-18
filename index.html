@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suivi de Portefeuille Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --glass-shadow: 0 8px 32px 0 rgba(8, 13, 30, 0.37);
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #080d1e; /* Fallback color */
+        background-image: 
+          radial-gradient(circle at 15% 25%, rgba(0, 255, 255, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 85% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+          linear-gradient(170deg, #101831 0%, #080d1e 100%);
+        background-size: 100% 200%;
+        background-repeat: no-repeat;
+        color: #e5e7eb; /* text-gray-200 */
+        overflow: hidden; /* Prevent body scroll, allow inner scrolling */
+        transition: background-position 0.1s ease-out; /* Smooths the parallax effect slightly */
+      }
+      .font-mono-nums {
+        font-family: 'Roboto Mono', monospace;
+      }
+
+      #root {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* Liquid Glass Effect Card */
+      .dashboard-card {
+        background: var(--glass-bg);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1rem; /* 16px */
+        box-shadow: var(--glass-shadow);
+      }
+
+      /* Liquid Glass Buttons */
+      .btn-glass {
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        border: 1px solid;
+        transition: all 0.2s ease-in-out;
+        transform-origin: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        font-weight: bold;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem; /* 8px */
+        padding: 0.5rem 1rem;
+      }
+      .btn-glass:hover {
+        transform: translateY(-2px);
+      }
+      .btn-glass:active {
+        transform: translateY(-2px) scale(0.98);
+        filter: brightness(0.95);
+      }
+      .btn-glass:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+        transform: none;
+        box-shadow: none;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+      }
+      .btn-primary { /* Emerald */
+        background-color: rgba(16, 185, 129, 0.25);
+        border-color: rgba(16, 185, 129, 0.5);
+        text-shadow: 0 1px 2px rgba(16, 185, 129, 0.3);
+      }
+      .btn-primary:hover {
+        background-color: rgba(16, 185, 129, 0.4);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+      }
+      .btn-primary:disabled { background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2); }
+
+      .btn-secondary { /* Cyan */
+        background-color: rgba(6, 182, 212, 0.25);
+        border-color: rgba(6, 182, 212, 0.5);
+        text-shadow: 0 1px 2px rgba(6, 182, 212, 0.3);
+      }
+      .btn-secondary:hover {
+        background-color: rgba(6, 182, 212, 0.4);
+        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.3);
+      }
+      .btn-secondary:disabled { background-color: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.2); }
+
+      .btn-danger { /* Red */
+        background-color: rgba(220, 38, 38, 0.25);
+        border-color: rgba(220, 38, 38, 0.5);
+        text-shadow: 0 1px 2px rgba(220, 38, 38, 0.3);
+      }
+      .btn-danger:hover {
+        background-color: rgba(220, 38, 38, 0.4);
+        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+      }
+
+      .btn-neutral { /* White/Gray */
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+      .btn-neutral:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.1);
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      
+      /* Toast Animations */
+      @keyframes toast-in {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      .toast-enter {
+        animation: toast-in 0.3s ease-out forwards;
+      }
+
+      /* Pulse animation for update button */
+      @keyframes pulse { 50% { opacity: .7; } }
+      .animate-pulse-slow { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+      /* Modal Styles */
+      .modal-wrapper {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 50;
+        display: flex; align-items: center; justify-content: center; padding: 1rem;
+        opacity: 0; transition: opacity 0.2s ease-out; pointer-events: none;
+      }
+      .modal-wrapper.open { opacity: 1; pointer-events: auto; }
+      .modal-backdrop {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(12, 10, 24, 0.5);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        z-index: 0;
+      }
+      .modal-dialog {
+        position: relative; z-index: 1; width: 100%; max-width: 28rem;
+        max-height: 95vh; transform: scale(0.95); transition: all 0.2s ease-out;
+      }
+      @media (min-width: 640px) { .modal-dialog { max-width: 32rem; max-height: 90vh; } }
+      .modal-wrapper.open .modal-dialog { transform: scale(1); }
+
+      /* Sidebar & Main Content - Mobile First */
+      .sidebar {
+        position: fixed; top: 0; left: 0; bottom: 0;
+        background: var(--glass-bg);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border-right: 1px solid var(--glass-border);
+        z-index: 40; display: flex; flex-direction: column;
+        padding: 1.5rem 1rem; width: 16rem; /* w-64 */
+        transform: translateX(-100%); transition: transform 0.3s ease-in-out;
+      }
+      .sidebar.open { transform: translateX(0); }
+
+      .main-content {
+        width: 100%; display: flex; flex-direction: column; flex: 1;
+        height: 100vh;
+      }
+
+      /* Desktop sidebar styles */
+      @media (min-width: 768px) {
+        .sidebar { transform: translateX(0); transition: width 0.3s ease-in-out; }
+        .sidebar.expanded { width: 16rem; }
+        .sidebar.collapsed { width: 5rem; }
+        .main-content {
+          /* The expanded sidebar will now float over the content, enhancing the glass effect. */
+          margin-left: 5rem;
+        }
+      }
+
+      .sidebar-link {
+        display: flex; align-items: center; padding: 0.75rem 1rem; border-radius: 0.5rem;
+        color: #d1d5db; /* text-gray-300 */ font-weight: 500;
+        transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+        overflow: hidden; white-space: nowrap;
+      }
+      .sidebar-link:hover {
+        background-color: rgba(255, 255, 255, 0.1); color: #F9FAFB; /* text-gray-50 */
+      }
+      .sidebar-link.active {
+        background: linear-gradient(90deg, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.1));
+        color: white; font-weight: 600;
+        box-shadow: inset 2px 0 0 0 #10B981; /* bg-emerald-600 */
+      }
+      
+      /* Animation for Market Ticker */
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .ticker-item-animate {
+        animation: fade-in 0.5s ease-out forwards;
+      }
+
+      /* Prose styles for Markdown rendering */
+      .prose-invert h2 {
+        font-size: 1.25rem; /* text-xl */
+        line-height: 1.75rem;
+        font-weight: 600; /* semibold */
+        color: white;
+        margin-top: 1.5em;
+        margin-bottom: 0.8em;
+      }
+      .prose-invert h3, .prose-invert h4 {
+        font-size: 1.125rem; /* text-lg */
+        line-height: 1.75rem;
+        font-weight: 600; /* semibold */
+        color: #d1d5db; /* text-gray-300 */
+        margin-top: 1.2em;
+        margin-bottom: 0.6em;
+      }
+      .prose-invert p {
+        margin-top: 0.8em;
+        margin-bottom: 0.8em;
+        line-height: 1.65;
+        color: #d1d5db; /* text-gray-300 */
+      }
+      .prose-invert ul {
+        margin-top: 0.8em;
+        margin-bottom: 0.8em;
+        padding-left: 1.75em;
+        list-style-type: disc;
+      }
+      .prose-invert li {
+        margin-top: 0.4em;
+        margin-bottom: 0.4em;
+      }
+       .prose-invert li::marker {
+        color: #6b7280; /* text-gray-500 */
+      }
+      .prose-invert strong {
+        color: #f9fafb; /* text-gray-50 */
+        font-weight: 600;
+      }
+      .prose-invert a {
+        color: #22d3ee; /* cyan-400 */
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .prose-invert a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.21.0",
+    "recharts": "https://aistudiocdn.com/recharts@^2.12.7",
+    "react-markdown": "https://aistudiocdn.com/react-markdown@^9.0.1"
+  }
+}
+</script>
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script src="https://apis.google.com/js/api.js" async></script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

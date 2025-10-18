@@ -1,0 +1,5 @@
+{
+  "name": "Suivi de Portefeuille Pro",
+  "description": "Une application simple et élégante pour suivre manuellement la performance de votre portefeuille d'actions. Ajoutez vos positions pour surveiller la valeur totale et calculer les plus ou moins-values en temps réel.",
+  "requestFramePermissions": []
+}
