@@ -113,7 +113,7 @@ const AiBriefing: React.FC<AiBriefingProps> = ({ positions, portfolioSummary }) 
         *   (1 à 2 points clés sur les **événements économiques des dernières 24-48 heures** qui pourraient impacter le portefeuille. Ex: déclarations de banques centrales, chiffres de l'inflation, craintes sur un secteur spécifique comme les banques régionales américaines.)
 
         **## Observations sur les Positions**
-        *   **[Nom de la 1ère action clé] :** (Une phrase sur une actualité **très récente** ou une variation de cours notable qui explique sa performance. Ex: "La volatilité sur [Action A] s'explique par les inquiétudes apparues hier concernant...")
+        *   **[Nom de la 1ère action clé] :** (Une phrase sur une actualité **très recente** ou une variation de cours notable qui explique sa performance. Ex: "La volatilité sur [Action A] s'explique par les inquiétudes apparues hier concernant...")
         *   **[Nom de la 2ème action clé] :** (Une phrase similaire pour une autre position pertinente, en la connectant à un fait d'actualité précis et récent.)
         *   **[Point de vigilance sectoriel ou thématique] :** (Une phrase sur un risque ou une opportunité **actuelle** liée à un secteur dominant dans le portefeuille. Ex: "Le secteur [Secteur X], fortement représenté, est directement exposé à la récente hausse de la volatilité sur les marchés obligataires.")
 

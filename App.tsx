@@ -7,6 +7,7 @@ import InsightsView from './views/InsightsView';
 import CalendarView from './views/CalendarView';
 import Header from './components/Header';
 import LoginView from './views/LoginView';
+import WelcomeView from './views/WelcomeView';
 import TutorialModal from './components/TutorialModal';
 
 // FIX: Add declarations for Google API objects to resolve TypeScript errors by extending the Window interface.
@@ -26,7 +27,7 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const API_KEY = process.env.API_KEY || '';
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
 const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile';
-const APP_DATA_FILE_NAME = 'portfolio-pro-data.json';
+const APP_DATA_FILE_NAME = 'horizon-invest-data.json';
 
 const App: React.FC = () => {
   const [positions, setPositions] = useState<PortfolioPosition[]>([]);
@@ -49,12 +50,13 @@ const App: React.FC = () => {
   const [tokenClient, setTokenClient] = useState<any>(null);
   const [isGoogleAuthAvailable, setIsGoogleAuthAvailable] = useState(false);
   
-  // --- Tutorial Modal State ---
+  // --- Onboarding State ---
+  const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
   useEffect(() => {
     // This effect runs only once on mount to check if the tutorial should be shown.
-    const shouldShowTutorial = localStorage.getItem('portfolio-pro-show-tutorial');
+    const shouldShowTutorial = localStorage.getItem('horizon-invest-show-tutorial');
     if (shouldShowTutorial !== 'false') {
       setIsTutorialOpen(true);
     }
@@ -63,7 +65,7 @@ const App: React.FC = () => {
   const handleCloseTutorial = (dontShowAgain: boolean) => {
     setIsTutorialOpen(false);
     if (dontShowAgain) {
-      localStorage.setItem('portfolio-pro-show-tutorial', 'false');
+      localStorage.setItem('horizon-invest-show-tutorial', 'false');
     }
   };
 
@@ -223,6 +225,7 @@ const App: React.FC = () => {
             window.gapi.client.setToken(null);
             setIsLoggedIn(false);
             setUserProfile(null);
+            setHasSeenWelcome(false); // Reset welcome screen for next login
             // Reset all data
             setPositions([]);
             setHistory([]);
@@ -242,28 +245,38 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Parallax background effect
+  // Spotlight effect that follows the mouse
   useEffect(() => {
-    const handleScroll = () => {
-      if (mainContentRef.current) {
-        const scrollTop = mainContentRef.current.scrollTop;
-        const parallaxFactor = 0.4; // Adjust this value for more/less effect
-        document.body.style.backgroundPositionY = `${-scrollTop * parallaxFactor}px`;
-      }
+    const handleMouseMove = (e: MouseEvent) => {
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
     };
 
-    const mainContentEl = mainContentRef.current;
-    if (mainContentEl) {
-      mainContentEl.addEventListener('scroll', handleScroll);
-    }
+    window.addEventListener('mousemove', handleMouseMove);
 
     return () => {
-      if (mainContentEl) {
-        mainContentEl.removeEventListener('scroll', handleScroll);
-      }
+      window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
   
+  // Parallax effect for the background
+  useEffect(() => {
+    const mainEl = mainContentRef.current;
+    if (!mainEl) return;
+
+    const handleScroll = () => {
+      const scrollTop = mainEl.scrollTop;
+      const scrollFactor = 0.3; // Adjust for more/less parallax
+      document.documentElement.style.setProperty('--bg-scroll-y', `${-scrollTop * scrollFactor}px`);
+    };
+
+    mainEl.addEventListener('scroll', handleScroll);
+
+    return () => {
+      mainEl.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   const portfolioSummary = useMemo(() => {
     const totalCost = positions.reduce((acc, pos) => acc + pos.totalCost, 0);
     const currentValue = positions.reduce((acc, pos) => acc + pos.currentValue, 0);
@@ -363,6 +376,16 @@ const App: React.FC = () => {
   if (isGoogleAuthAvailable && !isLoggedIn) {
       return <LoginView onLogin={handleLogin} />;
   }
+
+  if (isGoogleAuthAvailable && !hasSeenWelcome) {
+    return (
+      <WelcomeView
+        userName={userProfile?.name?.split(' ')[0] || 'Investisseur'}
+        onComplete={() => setHasSeenWelcome(true)}
+      />
+    );
+  }
+
 
   return (
     <div className="text-gray-100 font-sans min-h-screen flex w-full">

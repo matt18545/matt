@@ -51,7 +51,7 @@ const ImportIcon: React.FC<{ className?: string }> = ({ className }) => (
 
 const tutorialPages = [
   {
-    title: "Bienvenue sur Portefeuille Pro",
+    title: "Bienvenue sur Horizon Invest",
     content: (
         <>
             <p className="mb-4">Cette application vous permet de suivre manuellement la performance de vos investissements de manière simple et visuelle.</p>

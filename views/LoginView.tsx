@@ -20,7 +20,7 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
             <div className="w-full max-w-md text-center">
                 <div className="dashboard-card p-8 md:p-12">
                     <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
-                        Portefeuille Pro
+                        Horizon Invest
                     </h1>
                     <p className="mt-4 text-gray-300">
                         Connectez-vous pour synchroniser vos données de manière sécurisée et y accéder depuis n'importe quel appareil.

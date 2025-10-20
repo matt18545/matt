@@ -197,30 +197,38 @@ const DashboardView: React.FC<DashboardViewProps> = ({
         <>
             <main className="container mx-auto px-4 md:px-6 py-8">
                 <div className="space-y-8">
-                    <PortfolioSummary {...portfolioSummary} lastUpdatedAt={lastUpdatedAt} />
-                    <AiBriefing positions={positions} portfolioSummary={portfolioSummary} />
+                    <div className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+                        <PortfolioSummary {...portfolioSummary} lastUpdatedAt={lastUpdatedAt} />
+                    </div>
+                    <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                       <AiBriefing positions={positions} portfolioSummary={portfolioSummary} />
+                    </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
                         <AllocationChart positions={positions} />
                         <UpcomingEvents positions={positions} manualEvents={manualEvents} />
                     </div>
                     
-                    <GainLossChart
-                        data={history}
-                        onResetHistory={handleResetHistory}
-                        hasPendingChanges={hasPendingChanges}
-                        onUpdateHistory={handleUpdateHistory}
-                    />
-                    <PortfolioTable 
-                        positions={positions} 
-                        onDeletePosition={deletePosition} 
-                        onUpdatePosition={updatePosition}
-                        onAddPositionClick={openPanel}
-                        viewMode={viewMode}
-                    />
+                     <div className="animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+                        <GainLossChart
+                            data={history}
+                            onResetHistory={handleResetHistory}
+                            hasPendingChanges={hasPendingChanges}
+                            onUpdateHistory={handleUpdateHistory}
+                        />
+                    </div>
+                    <div className="animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+                        <PortfolioTable 
+                            positions={positions} 
+                            onDeletePosition={deletePosition} 
+                            onUpdatePosition={updatePosition}
+                            onAddPositionClick={openPanel}
+                            viewMode={viewMode}
+                        />
+                    </div>
 
                     {/* Section de Gestion des Données */}
-                    <div className="dashboard-card p-6">
+                     <div className="dashboard-card p-6 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
                         <h3 className="text-lg font-semibold text-white">Sauvegardes Locales</h3>
                         <p className="text-sm text-gray-400 mt-1 mb-4">
                            Créez une sauvegarde locale de vos données ou restaurez à partir d'un fichier. Ceci est indépendant de la synchronisation cloud avec votre compte Google.

@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isDesktopS
         >
             <div className={`mb-10 whitespace-nowrap overflow-hidden md:transition-all md:duration-200 ${isDesktopSidebarCollapsed ? 'md:h-0 md:opacity-0 md:mb-0' : ''}`}>
                 <h1 className="text-2xl font-bold text-white text-center tracking-tight">
-                    Portefeuille Pro
+                    Horizon Invest
                 </h1>
             </div>
             <ul className="space-y-2 flex-grow">
